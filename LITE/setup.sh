@@ -131,7 +131,7 @@ chmod +x ins-xray.sh;
 clear
 echo -e "${INFO} Installing Vps Menu";
 sleep 2
-wget -q -O /root/ins-xray.sh "https://raw.githubusercontent.com/3xplx/MULTIPORT/main/LITE/XRAY/ins-menu.sh";
+wget -q -O /root/ins-menu.sh "https://raw.githubusercontent.com/3xplx/MULTIPORT/main/LITE/XRAY/ins-menu.sh";
 chmod +x ins-menu.sh;
 /root/ins-menu.sh;
 
