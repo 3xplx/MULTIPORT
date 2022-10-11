@@ -1,4 +1,6 @@
 #!/bin/bash
+clear;
+
 
 # // Make Folder
 rm -rf /root/scvpn_data/ > /dev/null 2>&1
@@ -58,24 +60,30 @@ systemctl stop apache2 > /dev/null 2>&1
 lsof -t -i tcp:80 -s tcp:listen | xargs kill > /dev/null 2>&1
 lsof -t -i tcp:443 -s tcp:listen | xargs kill > /dev/null 2>&1
 
-source /root/scvpn_data/secure.dat;
+MYIP=$(wget -qO- ipinfo.io/ip);
+dataV=$( curl -sS https://raw.githubusercontent.com/3xplx/MULTIPORT/main/LITE/scvpn_data  )
+echo "$dataV" > /root/scvpn_data/scvpn_data
+echo "IP='$MYIP'" >> /root/scvpn_data/scvpn_data
+source /root/scvpn_data/scvpn_data;
 
 # // Checking Your Running Or Root or no
 if [[ "${EUID}" -ne 0 ]]; then
-echo -e " ${ERROR} Please run this script as root user";
+echo -e "${ERROR} Please run this script as root user";
 exit 1
 fi
 
 clear
 read -p "Input Your Domain : " domain
 domain=$( echo $domain | sed 's/ //g' );
+
 if [[ $domain == "" ]]; then
 clear;
-echo -e "${ERROR} No Input Detected !";
+echo -e "${ERROR} Domain cannot be empty !";
 exit 1;
-else
-echo "$domain" > /root/scvpn_data/domain.dat;
-domain=$( cat /root/scvpn_data/domain.dat );
+fi
+
+echo "$domain" > /root/scvpn_data/domain;
+domain=$( cat /root/scvpn_data/domain );
 echo -e "${INFO} Domain Added Successfully !";
 sleep 2
 clear;
@@ -88,8 +96,14 @@ sudo /root/.acme.sh/acme.sh --register-account -m vpn-script@wildydev21.com;
 sudo /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256 -ak ec-256;
 # // Success
 echo -e "${OKEY} Your Domain : $domain";
-sleep 5;
-fi
+echo -e "${INFO} Installation Will Continue In 5 Second"
+sleep 5
+
+# // Installing Requirement
+clear
+wget -q -O /root/requirement.sh "https://raw.githubusercontent.com/3xplx/MULTIPORT/main/LITE/requirement.sh";
+chmod +x requirement.sh;
+/root/requirement.sh;
 
 
 
