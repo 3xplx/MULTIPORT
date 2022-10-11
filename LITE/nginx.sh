@@ -231,4 +231,5 @@ systemctl restart nginx.service >/dev/null 2>&1
 echo "BETA MASI BOSKUU" > /home/vps/public_html/index.html
 
 echo -e "$INFO Nginx Installed Successfully!" 
+rm /root/nginx.sh
 sleep 3
