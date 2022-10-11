@@ -33,7 +33,7 @@ if ! grep -q 'ssl_renew.sh' /var/spool/cron/crontabs/root;then (crontab -l;echo 
 # set uuid
 uuid=$(cat /proc/sys/kernel/random/uuid)
 # xray config
-cat > /usr/local/etc/xray/config.json << END
+cat > /etc/xray/config.json << END
 {
   "log" : {
     "access": "/var/log/xray/access.log",
