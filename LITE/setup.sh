@@ -95,16 +95,57 @@ chmod +x /root/.acme.sh/acme.sh;
 sudo /root/.acme.sh/acme.sh --register-account -m vpn-script@wildydev21.com;
 sudo /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256 -ak ec-256;
 # // Success
+sleep 3
+clear
+echo -e "${OKEY} Certificate Created Successfully";
 echo -e "${OKEY} Your Domain : $domain";
 echo -e "${INFO} Installation Will Continue In 5 Second"
 sleep 5
 
-# // Installing Requirement
+## // Installing Requirement
 clear
+echo -e "${INFO} Installing Requirement";
+sleep 2
 wget -q -O /root/requirement.sh "https://raw.githubusercontent.com/3xplx/MULTIPORT/main/LITE/requirement.sh";
 chmod +x requirement.sh;
 /root/requirement.sh;
 
+## // Install Nginx
+clear
+echo -e "${INFO} Installing Nginx";
+sleep 2
+wget -q -O /root/nginx.sh "https://raw.githubusercontent.com/3xplx/MULTIPORT/main/LITE/nginx.sh";
+chmod +x nginx.sh;
+/root/nginx.sh;
+
+## // Install Xray
+clear
+echo -e "${INFO} Installing Xray";
+sleep 2
+wget -q -O /root/ins-xray.sh "https://raw.githubusercontent.com/3xplx/MULTIPORT/main/LITE/XRAY/ins-xray.sh";
+chmod +x ins-xray.sh;
+/root/ins-xray.sh;
+
+
+## // Install Xray
+clear
+echo -e "${INFO} Installing Vps Menu";
+sleep 2
+wget -q -O /root/ins-xray.sh "https://raw.githubusercontent.com/3xplx/MULTIPORT/main/LITE/XRAY/ins-menu.sh";
+chmod +x ins-menu.sh;
+/root/ins-menu.sh;
+
+
+clear
+echo -e "${INFO} The installation completed successfully";
+echo -e ""
+echo -ne "$INFO Do you want to reboot now ? (y/n)? "
+read answer
+if [ "$answer" == "${answer#[Yy]}" ] ;then
+exit 0
+else
+reboot
+fi
 
 
 
