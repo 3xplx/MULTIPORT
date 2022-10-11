@@ -1,33 +1,20 @@
 #!/bin/bash
-source /root/scvpn_data/scvpn_data;
+clear
 
-# Check OS version
-if [[ -e /etc/debian_version ]]; then
-	source /etc/os-release
-	OS=$ID # debian or ubuntu
-elif [[ -e /etc/centos-release ]]; then
-	source /etc/os-release
-	OS=centos
-fi
-if [[ $OS == 'ubuntu' ]]; then
-		sudo add-apt-repository ppa:ondrej/nginx -y
-		apt update ; apt upgrade -y
-		sudo apt install nginx -y
-		sudo apt install python3-certbot-nginx -y
-		systemctl daemon-reload
-        systemctl enable nginx
-elif [[ $OS == 'debian' ]]; then
-		apt-get install libpcre3 libpcre3-dev zlib1g-dev dbus -y
-		echo "deb http://nginx.org/packages/mainline/debian `lsb_release -cs` nginx" \ | tee /etc/apt/sources.list.d/nginx.list
-		curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
-		apt update
-		apt install nginx -y
-        sudo apt update 
-        apt -y install nginx 
-fi
+source /root/scvpn_data/scvpn_data;
+domain=$( cat /root/scvpn_data/domain );
+
+sudo add-apt-repository ppa:ondrej/nginx -y
+apt update ; apt upgrade -y
+apt install nginx -y
+apt install python3-certbot-nginx -y
 systemctl daemon-reload
 systemctl enable nginx
-fi
+
+
+systemctl daemon-reload
+systemctl enable nginx
+
 # nginx configurations
 cat >/etc/nginx/conf.d/xray.conf <<EOF
     server {
@@ -36,8 +23,8 @@ cat >/etc/nginx/conf.d/xray.conf <<EOF
              listen 443 ssl http2 reuseport;
              listen [::]:443 http2 reuseport;	
              server_name $domain;
-             ssl_certificate /etc/xray/xray.crt;
-             ssl_certificate_key /etc/xray/xray.key;
+             ssl_certificate /root/.acme.sh/${domain}_ecc/${domain}.cer;
+             ssl_certificate_key /root/.acme.sh/${domain}_ecc/${domain}.key;
              ssl_ciphers EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+ECDSA+AES128:EECDH+aRSA+AES128:RSA+AES128:EECDH+ECDSA+AES256:EECDH+aRSA+AES256:RSA+AES256:EECDH+ECDSA+3DES:EECDH+aRSA+3DES:RSA+3DES:!MD5;
              ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
              root /home/vps/public_html;
@@ -215,7 +202,6 @@ http {
 END
 
 mkdir -p /home/vps/public_html >/dev/null 2>&1
-domain=$(cat /root/domain)
 cat> /etc/nginx/conf.d/vps.conf <<-END
 server {
   listen       81;
@@ -235,8 +221,14 @@ server {
   }
 }
 END
+
+mkdir /etc/systemd/system/nginx.service.d >/dev/null 2>&1
+printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" > /etc/systemd/system/nginx.service.d/override.conf
+
+systemctl daemon-reload
 systemctl enable nginx.service >/dev/null 2>&1
 systemctl restart nginx.service >/dev/null 2>&1
 echo "BETA MASI BOSKUU" > /home/vps/public_html/index.html
 
 echo -e "$INFO Nginx Installed Successfully!" 
+sleep 3
