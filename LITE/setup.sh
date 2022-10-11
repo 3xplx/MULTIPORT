@@ -127,7 +127,7 @@ chmod +x ins-xray.sh;
 /root/ins-xray.sh;
 
 
-## // Install Xray
+## // Install menu
 clear
 echo -e "${INFO} Installing Vps Menu";
 sleep 2
