@@ -358,10 +358,6 @@ sleep 1
 echo -e "$INFO Enable & restart xray "
 systemctl enable xray >/dev/null 2>&1
 systemctl restart xray >/dev/null 2>&1
-sleep 1
-echo -e "$INFO Enable & restart trojan-go "
-systemctl enable trojan-go >/dev/null 2>&1
-systemctl restart trojan-go >/dev/null 2>&1
 
 echo -e "$INFO Xray Installed Successfully!" 
 rm /root/ins-xray.sh >/dev/null 2>&1
