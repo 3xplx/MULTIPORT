@@ -3,6 +3,7 @@
 # // Make Folder
 rm -rf /root/scvpn_data/ > /dev/null 2>&1
 mkdir -p /root/scvpn_data/ > /dev/null 2>&1
+mkdir -p /etc/xray/ > /dev/null 2>&1
 
 ## // Running Update & install Requirement
 apt update -y;
@@ -50,8 +51,6 @@ apt install socat -y;
 apt install sudo -y;
 
 # // Stopping Service maybe is installed
-systemctl stop xray-mini@tls > /dev/null 2>&1
-systemctl stop xray-mini@nontls > /dev/null 2>&1
 systemctl stop nginx > /dev/null 2>&1
 systemctl stop apache2 > /dev/null 2>&1
 
@@ -66,4 +65,32 @@ if [[ "${EUID}" -ne 0 ]]; then
 echo -e " ${ERROR} Please run this script as root user";
 exit 1
 fi
+
+clear
+read -p "Input Your Domain : " domain
+domain=$( echo $domain | sed 's/ //g' );
+if [[ $domain == "" ]]; then
+clear;
+echo -e "${ERROR} No Input Detected !";
+exit 1;
+else
+echo "$domain" > /root/scvpn_data/domain.dat;
+domain=$( cat /root/scvpn_data/domain.dat );
+echo -e "${INFO} Domain Added Successfully !";
+sleep 2
+clear;
+echo -e "${OKEY} Starting Generating Certificate";
+rm -rf /root/.acme.sh;
+mkdir -p /root/.acme.sh;
+wget -q -O /root/.acme.sh/acme.sh "https://raw.githubusercontent.com/3xplx/MULTIPORT/main/RESOURCE/acme.sh";
+chmod +x /root/.acme.sh/acme.sh;
+sudo /root/.acme.sh/acme.sh --register-account -m vpn-script@wildydev21.com;
+sudo /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256 -ak ec-256;
+# // Success
+echo -e "${OKEY} Your Domain : $domain";
+sleep 5;
+fi
+
+
+
 
